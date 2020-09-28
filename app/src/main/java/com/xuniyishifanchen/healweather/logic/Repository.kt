@@ -12,7 +12,6 @@ object Repository {
         val placeResponse = HealWeatherNetwork.searchPlaces(query)
         if (placeResponse.status == "ok") {
             val places = placeResponse.places
-            Log.d("xuchen", "searchPlaces: $places")
             Result.success(places)
         } else {
             Result.failure(RuntimeException("response status is ${placeResponse.status}"))
@@ -26,7 +25,6 @@ object Repository {
             } catch (e: Exception) {
                 Result.failure<T>(e)
             }
-            Log.d("xuchen", "fire: $result")
             emit(result)
         }
 

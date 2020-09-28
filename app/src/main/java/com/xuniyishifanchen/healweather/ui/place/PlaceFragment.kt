@@ -1,62 +1,69 @@
 package com.xuniyishifanchen.healweather.ui.place
 
 import android.os.Bundle
-import android.text.Editable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.xuniyishifanchen.healweather.R
-import kotlinx.android.synthetic.main.fragment_place.*
+import com.xuniyishifanchen.healweather.databinding.FragmentPlaceBinding
 
 class PlaceFragment : Fragment() {
 
-    val viewModel by lazy { ViewModelProviders.of(this).get(PlaceViewModel::class.java) }
+    val viewModel by viewModels<PlaceViewModel>()
 
     private lateinit var adapter: PlaceAdapter
+
+    private lateinit var dataBinding: FragmentPlaceBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_place, container, false)
+        dataBinding = FragmentPlaceBinding.inflate(inflater, container, false)
+        return dataBinding.root
     }
+
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         val layoutManager = LinearLayoutManager(context)
-        recycle_place.layoutManager = layoutManager
+        dataBinding.recyclePlace.layoutManager = layoutManager
         adapter = PlaceAdapter(viewModel.placeList)
-        recycle_place.adapter = adapter
-        search_place_et.addTextChangedListener { editable ->
-            val content = editable.toString()
-            if (content.isNotEmpty()) {
-                viewModel.searchPlaces(content)
-            } else {
-                viewModel.placeList.clear()
-                bg_image.visibility = View.VISIBLE
-                adapter.notifyDataSetChanged()
-            }
-
+        dataBinding.recyclePlace.adapter = adapter
+        dataBinding.apply {
+            lifecycleOwner = viewLifecycleOwner
+            placeVM = viewModel
         }
-        viewModel.placeLiveData.observe(this, Observer {
+//        search_place_et.addTextChangedListener { editable ->
+//            val content = editable.toString()
+//            if (content.isNotEmpty()) {
+//                viewModel.searchPlaces(content)
+//            } else {
+//                viewModel.placeList.clear()
+//                bg_image.visibility = View.VISIBLE
+//                adapter.notifyDataSetChanged()
+//            }
+//
+//        }
+        viewModel.placeLiveData.observe(viewLifecycleOwner, Observer {
             val places = it.getOrNull()
-            if(places != null){
-                recycle_place.visibility = View.VISIBLE
-                bg_image.visibility = View.GONE
+            if (places != null) {
+                dataBinding.recyclePlace.visibility = View.VISIBLE
                 viewModel.placeList.clear()
                 viewModel.placeList.addAll(places)
                 adapter.notifyDataSetChanged()
-            }else{
-                Toast.makeText(activity,"未能查到地址",Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(activity, "未能查到地址", Toast.LENGTH_LONG).show()
             }
+        })
+        viewModel.isPlaceListEmptyLiveData.observe(viewLifecycleOwner, Observer {
+            Log.d("xuchen", "onActivityCreated: $it")
         })
     }
 }

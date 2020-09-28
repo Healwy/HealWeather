@@ -19,7 +19,6 @@ object HealWeatherNetwork {
             enqueue(object : Callback<T> {
                 override fun onResponse(call: Call<T>, response: Response<T>) {
                     val body = response.body()
-                    Log.d("xuchen", "onResponse: $body")
                     if (body != null) {
                         continuation.resume(body)
                     } else {
