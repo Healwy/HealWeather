@@ -1,11 +1,11 @@
 package com.xuniyishifanchen.healweather.ui.place
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -21,9 +21,9 @@ class PlaceFragment : Fragment() {
     private lateinit var dataBinding: FragmentPlaceBinding
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         dataBinding = FragmentPlaceBinding.inflate(inflater, container, false)
         return dataBinding.root
@@ -40,30 +40,30 @@ class PlaceFragment : Fragment() {
             lifecycleOwner = viewLifecycleOwner
             placeVM = viewModel
         }
-//        search_place_et.addTextChangedListener { editable ->
-//            val content = editable.toString()
-//            if (content.isNotEmpty()) {
-//                viewModel.searchPlaces(content)
-//            } else {
-//                viewModel.placeList.clear()
-//                bg_image.visibility = View.VISIBLE
-//                adapter.notifyDataSetChanged()
-//            }
-//
-//        }
+
+        dataBinding.searchPlaceEt.addTextChangedListener {
+            val content = it.toString()
+            if (content.isNotEmpty()) {
+                viewModel.searchLiveData.value = content
+            } else {
+                viewModel.placeList.clear()
+                adapter.notifyDataSetChanged()
+                dataBinding.recyclePlace.visibility = View.INVISIBLE
+                dataBinding.bgImage.visibility = View.VISIBLE
+            }
+        }
+
         viewModel.placeLiveData.observe(viewLifecycleOwner, Observer {
             val places = it.getOrNull()
             if (places != null) {
                 dataBinding.recyclePlace.visibility = View.VISIBLE
+                dataBinding.bgImage.visibility = View.INVISIBLE
                 viewModel.placeList.clear()
                 viewModel.placeList.addAll(places)
                 adapter.notifyDataSetChanged()
             } else {
                 Toast.makeText(activity, "未能查到地址", Toast.LENGTH_LONG).show()
             }
-        })
-        viewModel.isPlaceListEmptyLiveData.observe(viewLifecycleOwner, Observer {
-            Log.d("xuchen", "onActivityCreated: $it")
         })
     }
 }

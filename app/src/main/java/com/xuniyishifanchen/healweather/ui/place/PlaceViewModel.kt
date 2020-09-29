@@ -7,15 +7,11 @@ import com.xuniyishifanchen.healweather.logic.Repository
 import com.xuniyishifanchen.healweather.logic.model.Place
 
 class PlaceViewModel : ViewModel() {
-    val searchLiveData = MutableLiveData<String>("")
+    val searchLiveData = MutableLiveData<String>()
 
     val placeList = ArrayList<Place>()
 
     val placeLiveData = Transformations.switchMap(searchLiveData) {
         Repository.searchPlaces(it)
-    }
-
-    val isPlaceListEmptyLiveData = Transformations.map(placeLiveData) {
-        it.getOrNull().isNullOrEmpty()
     }
 }
