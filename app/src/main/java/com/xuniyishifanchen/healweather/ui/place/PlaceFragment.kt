@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.xuniyishifanchen.healweather.databinding.FragmentPlaceBinding
+import com.xuniyishifanchen.log.TLog
 
 class PlaceFragment : Fragment() {
 
@@ -21,9 +22,9 @@ class PlaceFragment : Fragment() {
     private lateinit var dataBinding: FragmentPlaceBinding
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         dataBinding = FragmentPlaceBinding.inflate(inflater, container, false)
         return dataBinding.root
@@ -61,6 +62,7 @@ class PlaceFragment : Fragment() {
                 viewModel.placeList.clear()
                 viewModel.placeList.addAll(places)
                 adapter.notifyDataSetChanged()
+                TLog.d("places = $places")
             } else {
                 Toast.makeText(activity, "未能查到地址", Toast.LENGTH_LONG).show()
             }
