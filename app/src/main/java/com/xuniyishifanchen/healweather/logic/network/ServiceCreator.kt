@@ -17,7 +17,7 @@ object ServiceCreator {
 
     private val retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
-//        .client(client)
+        .client(client)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 

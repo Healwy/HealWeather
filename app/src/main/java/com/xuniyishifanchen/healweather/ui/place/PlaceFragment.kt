@@ -15,7 +15,7 @@ import com.xuniyishifanchen.log.TLog
 
 class PlaceFragment : Fragment() {
 
-    val viewModel by viewModels<PlaceViewModel>()
+    private val viewModel by viewModels<PlaceViewModel>()
 
     private lateinit var adapter: PlaceAdapter
 
